@@ -15,6 +15,7 @@ import psutil
 
 from . import constants
 from .warnings import daemon_warnings
+from .platform import platform_specific, OSX
 
 def _load(filepath):
     with open(filepath, 'r') as f:
@@ -64,9 +65,6 @@ def verify_mac_username(username):
     except:
         raise RuntimeError('No user found named {}'.format(username))
 
-def _running_on_mac():
-    return bool(platform.mac_ver()[0])
-
 def _mac_version_is_post_yosemite():
     version = platform.mac_ver()[0]
     minor_version = int(version.split('.')[1])
@@ -104,7 +102,8 @@ def _set_ssh_auth_sock(ssh_auth_sock):
     else:
         daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
 
-def check_and_load_ssh_auth():
+@platform_specific
+def check_and_load_ssh_auth(payload=None, platform=None):
     """
     Will check the mac_username config value; if it is present, will load that user's
     SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
@@ -118,7 +117,11 @@ def check_and_load_ssh_auth():
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
         return
-    if not _running_on_mac(): # give our Linux unit tests a way to not freak out
+
+    if payload and (payload.get('client_username') == mac_username) and payload.get('client_ssh_auth'):
+        return _set_ssh_auth_sock(payload['client_ssh_auth'])
+
+    if not platform == OSX: # give our Linux unit tests a way to not freak out
         logging.info("Skipping SSH load, we are not running on Mac")
         return
 

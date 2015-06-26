@@ -8,10 +8,11 @@ from . import (get_canonical_container_name, get_docker_env, get_docker_client,
                get_container_for_app_or_service)
 from ... import constants
 from ...log import log_to_client
-from ...subprocess import check_output_demoted, check_and_log_output_and_error_demoted
+from ...subprocess import check_and_log_output_and_error
 from ...compiler.spec_assembler import get_assembled_specs
 from ...compiler.compose import links_for_app_or_service
 from ...path import parent_dir
+from ... import platform
 
 def write_composefile(compose_config, compose_file_location):
     logging.info('Writing new Composefile')
@@ -31,24 +32,29 @@ def _compose_base_command(core_command, compose_file_location, project_name):
     command += core_command
     return command
 
+def _compose_demote():
+    if platform.get_platform() == platform.LINUX:
+        return False
+    return True
+
 def compose_up(compose_file_location, project_name, recreate_containers=True):
     command = _compose_base_command(['up', '-d', '--allow-insecure-ssl'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
+    check_and_log_output_and_error(command, demote=_compose_demote(), env=get_docker_env(), strip_newlines=True)
 
 def _compose_stop(compose_file_location, project_name, services):
     command = _compose_base_command(['stop', '-t', '1'], compose_file_location, project_name)
     if services:
         command += services
-    check_and_log_output_and_error_demoted(command, env=get_docker_env())
+    check_and_log_output_and_error(command, demote=_compose_demote(), env=get_docker_env())
 
 def _compose_rm(compose_file_location, project_name, services):
     command = _compose_base_command(['rm', '-f'], compose_file_location, project_name)
     if services:
         command += services
-    check_and_log_output_and_error_demoted(command, env=get_docker_env())
+    check_and_log_output_and_error(command, demote=_compose_demote(), env=get_docker_env())
 
 def _check_stopped_linked_containers(client, container, assembled_specs):
     stopped_containers = []

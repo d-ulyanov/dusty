@@ -6,6 +6,7 @@ import logging
 from ...log import log_to_client
 from ...subprocess import check_output_demoted
 from ...compiler.spec_assembler import get_specs
+from ... import platform
 
 def exec_in_container(client, container, command, *args):
     exec_instance = client.exec_create(container['Id'],
@@ -31,6 +32,8 @@ def _get_set_envs():
     return env
 
 def get_docker_env():
+    if platform.get_platform() == platform.LINUX:
+        return {}
     env = _get_set_envs()
     if len(env.keys()) < 3:
         output = check_output_demoted(['boot2docker', 'shellinit'], redirect_stderr=True)
@@ -42,6 +45,8 @@ def get_docker_env():
     return env
 
 def get_docker_client():
+    if platform.get_platform() == platform.LINUX:
+        return docker.Client()
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
     env = get_docker_env()

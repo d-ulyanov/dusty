@@ -5,7 +5,7 @@ import yaml
 
 from ...source import Repo
 from ..spec_assembler import get_assembled_specs
-from ...path import vm_cp_path
+from ...path import cp_path
 from ... import constants
 from ...command_file import dusty_command_file_name
 from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
@@ -138,4 +138,4 @@ def _get_compose_volumes(app_name, assembled_specs):
     return volumes
 
 def _get_cp_volume_mount(app_name):
-    return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
+    return "{}:{}".format(cp_path(app_name), constants.CONTAINER_CP_DIR)

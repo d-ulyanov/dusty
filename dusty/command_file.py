@@ -6,6 +6,7 @@ from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
 from .systems.rsync import sync_local_path_to_vm
 from .path import parent_dir
+from .platform import running_osx
 
 def _write_commands_to_file(list_of_commands, file_location):
     file_location_parent = parent_dir(file_location)
@@ -147,7 +148,8 @@ def make_up_command_files(assembled_specs):
         script_specs = spec['scripts']
         for script_spec in script_specs:
             _write_up_script_command(app_name, spec, script_spec)
-    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
+    if running_osx():
+        sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
 
 def make_test_command_files(app_or_lib_name, expanded_specs):
     app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
@@ -157,4 +159,5 @@ def make_test_command_files(app_or_lib_name, expanded_specs):
         _write_test_command(app_or_lib_spec, expanded_specs)
         for suite_spec in suite_specs:
             _write_test_suite_command(app_or_lib_spec, suite_spec)
-    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
+    if running_osx():
+        sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)

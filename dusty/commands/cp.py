@@ -5,11 +5,12 @@ from contextlib import contextmanager
 import shutil
 
 from .. import constants
-from ..path import vm_cp_path
+from ..path import cp_path
 from ..systems.rsync import sync_local_path_to_vm, sync_local_path_from_vm, vm_path_is_directory
 from ..systems.docker.files import (move_dir_inside_container, move_file_inside_container,
                                copy_path_inside_container)
 from ..payload import daemon_command
+from .. import platform
 
 @contextmanager
 def _cleanup_path(path):
@@ -42,17 +43,30 @@ def copy_between_containers(source_name, source_path, dest_name, dest_path):
         copy_to_local(temp_path, source_name, source_path, demote=False)
         copy_from_local(temp_path, dest_name, dest_path, demote=False)
 
+def local_to_shared_cp(local_path, remote_name, temp_id, demote=True):
+    if platform.get_platform() == platform.OSX:
+        sync_local_path_to_vm(local_path, os.path.join(cp_path(remote_name), temp_identifier), demote=demote)
+    elif platform.get_platform() == platform.LINUX:
+        raise NotImplementedError
+
+def local_from_shared_cp(local_path, remote_name, temp_id, demote=True):
+    remote_path = os.path.join(cp_path(remote_name), temp_id)
+    if platform.get_platform() == platform.OSX:
+        is_dir = vm_path_is_directory(remote_path)
+        sync_local_path_from_vm(local_path, remote_path, demote=demote, is_dir=is_dir)
+    elif platform.get_platform() == platform.LINUX:
+        raise NotImplementedError
+
 @daemon_command
 def copy_from_local(local_path, remote_name, remote_path, demote=True):
     """Copy a path from the local filesystem to a path inside a Dusty
     container. The files on the local filesystem must be accessible
     by the user specified in mac_username."""
     temp_identifier = str(uuid.uuid1())
+    local_to_shared_cp(local_path, remote_name, temp_identifier, demote=demote)
     if os.path.isdir(local_path):
-        sync_local_path_to_vm(local_path, os.path.join(vm_cp_path(remote_name), temp_identifier), demote=demote)
         move_dir_inside_container(remote_name, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier), remote_path)
     else:
-        sync_local_path_to_vm(local_path, os.path.join(vm_cp_path(remote_name), temp_identifier), demote=demote)
         move_file_inside_container(remote_name, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier), remote_path)
 
 @daemon_command
@@ -62,6 +76,4 @@ def copy_to_local(local_path, remote_name, remote_path, demote=True):
     wrist-accessible by the user specified in mac_username."""
     temp_identifier = str(uuid.uuid1())
     copy_path_inside_container(remote_name, remote_path, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier))
-    vm_path = os.path.join(vm_cp_path(remote_name), temp_identifier)
-    is_dir = vm_path_is_directory(vm_path)
-    sync_local_path_from_vm(local_path, vm_path, demote=demote, is_dir=is_dir)
+    local_from_shared_cp(local_path, remote_name, temp_identifier, demote=demote)

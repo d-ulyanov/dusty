@@ -10,7 +10,7 @@ import git
 from .config import get_config_value
 from . import constants
 from .log import log_to_client
-from .path import parent_dir
+from .path import parent_dir, mount_repos_dir
 
 @contextmanager
 def git_error_handling():
@@ -83,7 +83,7 @@ class Repo(object):
 
     @property
     def vm_path(self):
-        return os.path.join(constants.VM_REPOS_DIR, self.remote_path.lstrip('/'))
+        return os.path.join(mount_repos_dir(), self.remote_path.lstrip('/'))
 
     def ensure_local_repo(self):
         """Given a Dusty repo object, clone the remote into Dusty's local repos

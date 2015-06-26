@@ -1,9 +1,9 @@
 from ...source import Repo
-from ...path import vm_command_files_path
+from ...path import command_files_path
 from ... import constants
 
 def get_command_files_volume_mount(app_or_lib_name, test=False):
-    return "{}{}:{}".format(vm_command_files_path(app_or_lib_name), '/test' if test else '', constants.CONTAINER_COMMAND_FILES_DIR)
+    return "{}{}:{}".format(command_files_path(app_or_lib_name), '/test' if test else '', constants.CONTAINER_COMMAND_FILES_DIR)
 
 def get_volume_mounts(app_or_lib_name, assembled_specs, test=False):
     if app_or_lib_name in assembled_specs['apps']:

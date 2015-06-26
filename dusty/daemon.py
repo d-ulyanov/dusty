@@ -46,8 +46,8 @@ def _refresh_warnings():
         refresh_config_warnings()
         refresh_preflight_warnings()
 
-def _run_pre_command_functions(connection, suppress_warnings, client_version):
-    check_and_load_ssh_auth()
+def _run_pre_command_functions(payload):
+    check_and_load_ssh_auth(payload=payload)
     _refresh_warnings()
 
 def close_client_connection(terminator=SOCKET_TERMINATOR):
@@ -85,7 +85,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                 try:
                     if client_version != constants.VERSION:
                         raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(constants.VERSION, client_version))
-                    _run_pre_command_functions(connection, suppress_warnings, client_version)
+                    _run_pre_command_functions(payload)
                     _send_warnings_to_client(connection, suppress_warnings)
                     fn(*args, **kwargs)
                 except Exception as e:

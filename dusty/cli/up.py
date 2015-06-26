@@ -20,8 +20,10 @@ from docopt import docopt
 
 from ..payload import Payload
 from ..commands.run import start_local_env
+from ..platform import platform_specific
 
-def main(argv):
+@platform_specific
+def main(argv, platform=None):
     args = docopt(__doc__, argv)
-    return Payload(start_local_env, recreate_containers=not args['--no-recreate'],
+    return Payload(start_local_env, platform, recreate_containers=not args['--no-recreate'],
                    pull_repos=not args['--no-pull'])

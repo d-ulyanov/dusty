@@ -11,9 +11,11 @@ from .. import constants
 from ..command_file import make_up_command_files
 from ..source import Repo
 from ..payload import daemon_command
+from ..platform import OSX, running_osx
+from .. import platform
 
 @daemon_command
-def start_local_env(recreate_containers=True, pull_repos=True):
+def start_local_env(platform, recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
     systems will in turn launch the services needed to make the
@@ -24,9 +26,14 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
 
-    log_to_client("Ensuring virtualbox vm is running")
-    virtualbox.initialize_docker_vm()
-    docker_ip = virtualbox.get_docker_vm_ip()
+    if platform == OSX:
+        log_to_client("Ensuring virtualbox vm is running")
+        virtualbox.initialize_docker_vm()
+
+    if platform == OSX:
+        docker_ip = virtualbox.get_docker_vm_ip()
+    else:
+        docker_ip = 'localhost'
 
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
@@ -49,8 +56,9 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     log_to_client("Saving port forwarding to hosts file")
     hosts.update_hosts_file_from_port_spec(port_spec)
-    log_to_client("Syncing local repos to the VM")
-    rsync.sync_repos(active_repos)
+    if platform == OSX:
+        log_to_client("Syncing local repos to the VM")
+        rsync.sync_repos(active_repos)
     log_to_client("Saving updated nginx config to the VM")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving Docker Compose config and starting all containers")
@@ -80,6 +88,9 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
         log_to_client("Restarting the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
         log_to_client("Restarting all active containers associated with Dusty")
+
+    if platform.get_platform() == platform.LINUX:
+        sync=False
 
     if sync:
         if app_or_service_names:

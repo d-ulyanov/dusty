@@ -14,6 +14,7 @@ from . import constants
 from .warnings import daemon_warnings
 from .subprocess import check_and_log_output_and_error
 from . import constants
+from .platform import noop_on_platform, LINUX
 
 class PreflightException(Exception):
     pass
@@ -46,16 +47,19 @@ def _maybe_version_warning(executable, installed_version):
 def _check_git():
     _assert_executable_exists('git')
 
+@noop_on_platform(LINUX)
 @returns_exception
 def _check_rsync():
     _assert_executable_exists('rsync')
 
+@noop_on_platform(LINUX)
 @returns_exception
 def _check_virtualbox():
     _assert_executable_exists('VBoxManage')
     installed_version = subprocess.check_output(['VBoxManage', '-v']).split('r')[0]
     _maybe_version_warning('virtualbox', installed_version)
 
+@noop_on_platform(LINUX)
 @returns_exception
 def _check_boot2docker():
     _assert_executable_exists('boot2docker')

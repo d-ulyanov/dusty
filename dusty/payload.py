@@ -1,4 +1,6 @@
 import json
+import os
+import pwd
 import yaml
 
 from .constants import VERSION
@@ -11,6 +13,8 @@ class Payload(object):
         self.args = args
         self.kwargs = kwargs
         self.suppress_warnings = False
+        self.client_ssh_auth = os.getenv('SSH_AUTH_SOCK')
+        self.client_username = pwd.getpwuid(os.getuid())[0]
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -25,7 +29,7 @@ class Payload(object):
         if fn_key not in _daemon_command_mapping:
             raise RuntimeError('Function key {} not found; you may need to decorate your function'.format(fn_key))
         doc = {'fn_key': fn_key, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
-               'args': self.args, 'kwargs': self.kwargs}
+               'args': self.args, 'kwargs': self.kwargs, 'client_ssh_auth': self.client_ssh_auth, 'client_username': self.client_username}
         return json.dumps(doc)
 
     @staticmethod
