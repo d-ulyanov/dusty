@@ -119,6 +119,9 @@ def check_and_load_ssh_auth(payload=None):
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
         return
+    if not _running_on_mac(): # give our Linux unit tests a way to not freak out
+        logging.info("Skipping SSH load, we are not running on Mac")
+        return
 
     if payload and (payload.get('client_username') == mac_username) and payload.get('client_ssh_auth'):
         return _set_ssh_auth_sock(payload['client_ssh_auth'])
