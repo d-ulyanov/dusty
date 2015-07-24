@@ -105,7 +105,7 @@ def _set_ssh_auth_sock(ssh_auth_sock):
     else:
         daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
 
-def check_and_load_ssh_auth():
+def check_and_load_ssh_auth(payload=None):
     """
     Will check the mac_username config value; if it is present, will load that user's
     SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
@@ -119,9 +119,9 @@ def check_and_load_ssh_auth():
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
         return
-    if not _running_on_mac(): # give our Linux unit tests a way to not freak out
-        logging.info("Skipping SSH load, we are not running on Mac")
-        return
+
+    if payload and (payload.get('client_username') == mac_username) and payload.get('client_ssh_auth'):
+        return _set_ssh_auth_sock(payload['client_ssh_auth'])
 
     if _mac_version_is_post_yosemite():
         _load_ssh_auth_post_yosemite(mac_username)
