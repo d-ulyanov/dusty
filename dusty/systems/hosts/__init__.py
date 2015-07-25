@@ -26,7 +26,7 @@ def _dusty_hosts_config(hosts_specs):
     header and footer so it can be easily removed later."""
     rules = '# BEGIN section for Dusty\n'
     for spec in hosts_specs:
-        rules += '{} {}\n'.format(spec['forwarded_ip'], spec['host_address'])
+        rules += '{} {}\n'.format('127.0.0.1', spec['host_address'])
     rules += '# END section for Dusty\n'
     return rules
 

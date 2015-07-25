@@ -7,14 +7,16 @@ from ...source import Repo
 from ..spec_assembler import get_assembled_specs
 from ...path import cp_path
 from ... import constants
+from ... import platform
 from ...command_file import dusty_command_file_name
 from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
 
 def _compose_dict_for_nginx(port_specs):
     """Return a dictionary containing the Compose spec required to run
     Dusty's nginx container used for host forwarding."""
+    volume_mount_from = constants.NGINX_CONFIG_DIR_IN_VM if platform.running_osx() else constants.NGINX_CONFIG_LOCAL_PATH
     spec = {'image': constants.NGINX_IMAGE,
-            'volumes': ['{}:{}'.format(constants.NGINX_CONFIG_DIR_IN_VM, constants.NGINX_CONFIG_DIR_IN_CONTAINER)],
+            'volumes': ['{}:{}'.format(volume_mount_from, constants.NGINX_CONFIG_DIR_IN_CONTAINER)],
             'command': 'nginx -g "daemon off;"'}
     all_host_ports = set([nginx_spec['host_port'] for nginx_spec in port_specs['nginx']])
     if all_host_ports:

@@ -80,4 +80,4 @@ if platform.running_osx():
     NGINX_CONFIG_DIR_IN_VM = os.path.join(VM_PERSIST_DIR, 'dustyNginx')
 else:
     LOCAL_CP_DIR = '/etc/dusty/cp'
-    WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_NGINX_DIR_KEY]
+    NGINX_CONFIG_LOCAL_PATH = os.path.join(CONFIG_DIR, 'dustyNginx')

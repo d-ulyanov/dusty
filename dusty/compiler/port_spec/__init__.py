@@ -58,6 +58,6 @@ def get_port_spec_document(expanded_active_specs, dest_ip):
             port_spec['docker_compose'][app_name].append(_docker_compose_port_spec(host_forwarding_spec, forwarding_port))
             port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port, dest_ip))
 
-            add_host_names(host_forwarding_spec, boot2docker_ip, port_spec, host_names)
+            add_host_names(host_forwarding_spec, dest_ip, port_spec, host_names)
             forwarding_port += 1
     return port_spec

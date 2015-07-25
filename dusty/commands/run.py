@@ -33,7 +33,7 @@ def start_local_env(platform, recreate_containers=True, pull_repos=True):
     if platform == OSX:
         docker_ip = virtualbox.get_docker_vm_ip()
     else:
-        docker_ip = 'localhost'
+        docker_ip = '127.0.0.1'
 
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
