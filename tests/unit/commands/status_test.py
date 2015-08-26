@@ -60,15 +60,16 @@ class TestStatusCommands(DustyTestCase):
         fake_vm_is_running.return_value = True
         get_dusty_status()
         call_args_list = fake_table.add_row.call_args_list
-        self.assertTrue(call(['app1', 'app', 'X']) in call_args_list)
-        self.assertTrue(call(['app2', 'app', 'X']) in call_args_list)
-        self.assertTrue(call(['lib1', 'lib', '']) in call_args_list)
-        self.assertTrue(call(['ser1', 'service', 'X']) in call_args_list)
-        self.assertTrue(call(['ser2', 'service', 'X']) in call_args_list)
-        self.assertTrue(call(['ser3', 'service', 'X']) in call_args_list)
-        self.assertTrue(call(['dustyInternalNginx', '', 'X']) in call_args_list)
+        self.assertTrue(call(['app1', 'app', 'X', '']) in call_args_list)
+        self.assertTrue(call(['app2', 'app', 'X', '']) in call_args_list)
+        self.assertTrue(call(['lib1', 'lib', '', '']) in call_args_list)
+        self.assertTrue(call(['ser1', 'service', 'X', '']) in call_args_list)
+        self.assertTrue(call(['ser2', 'service', 'X', '']) in call_args_list)
+        self.assertTrue(call(['ser3', 'service', 'X', '']) in call_args_list)
+        self.assertTrue(call(['dustyInternalNginx', '', 'X', '']) in call_args_list)
         self.assertEquals(len(call_args_list), 7)
 
+    @patch('dusty.commands.status.get_env_config')
     @patch('dusty.commands.status.docker_vm_is_running')
     @patch('dusty.systems.docker.get_docker_client')
     @patch('dusty.commands.status.PrettyTable')
@@ -78,7 +79,7 @@ class TestStatusCommands(DustyTestCase):
     @patch('dusty.compiler.spec_assembler._get_referenced_libs')
     @patch('dusty.compiler.spec_assembler._get_referenced_services')
     def test_get_dusty_status_active_2(self, fake_get_services, fake_get_libs, fake_get_apps, fake_get_specs,
-                                     fake_get_dusty_containers, fake_pretty_table, fake_get_docker_client, fake_vm_is_running):
+                                     fake_get_dusty_containers, fake_pretty_table, fake_get_docker_client, fake_vm_is_running, fake_get_env_config):
         fake_get_services.return_value = set(['ser1', 'ser2', 'ser3'])
         fake_get_libs.return_value = set(['lib1'])
         fake_get_apps.return_value = set(['app1', 'app2'])
@@ -91,13 +92,18 @@ class TestStatusCommands(DustyTestCase):
                                        'bundles': get_lib_dusty_schema({})}
         fake_get_docker_client.return_value = None
         fake_vm_is_running.return_value = True
+        fake_get_env_config.return_value = {
+            'app1': {},
+            'app2': {'TEST_VAR': 'true'},
+            'ser3': {'TEST_VAR': 'true'}
+        }
         get_dusty_status()
         call_args_list = fake_table.add_row.call_args_list
-        self.assertTrue(call(['app1', 'app', '']) in call_args_list)
-        self.assertTrue(call(['app2', 'app', '']) in call_args_list)
-        self.assertTrue(call(['lib1', 'lib', '']) in call_args_list)
-        self.assertTrue(call(['ser1', 'service', '']) in call_args_list)
-        self.assertTrue(call(['ser2', 'service', '']) in call_args_list)
-        self.assertTrue(call(['ser3', 'service', '']) in call_args_list)
-        self.assertTrue(call(['dustyInternalNginx', '', '']) in call_args_list)
+        self.assertTrue(call(['app1', 'app', '', '']) in call_args_list)
+        self.assertTrue(call(['app2', 'app', '', 'X']) in call_args_list)
+        self.assertTrue(call(['lib1', 'lib', '', '']) in call_args_list)
+        self.assertTrue(call(['ser1', 'service', '', '']) in call_args_list)
+        self.assertTrue(call(['ser2', 'service', '', '']) in call_args_list)
+        self.assertTrue(call(['ser3', 'service', '', 'X']) in call_args_list)
+        self.assertTrue(call(['dustyInternalNginx', '', '', '']) in call_args_list)
         self.assertEquals(len(call_args_list), 7)
