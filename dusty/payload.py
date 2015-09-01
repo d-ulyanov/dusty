@@ -3,6 +3,14 @@ import yaml
 
 from .constants import VERSION
 
+def _encode_utf8(args):
+    for idx, arg in enumerate(args):
+        if isinstance(arg, basestring):
+            args[idx] = arg.encode('utf-8')
+        if isinstance(arg, list):
+            args[idx] = _encode_utf8(arg)
+    return args
+
 class Payload(object):
     def __init__(self, fn, *args, **kwargs):
         self.fn = fn
@@ -30,7 +38,9 @@ class Payload(object):
 
     @staticmethod
     def deserialize(doc):
-        return yaml.safe_load(doc)
+        loaded = yaml.safe_load(doc)
+        loaded['args'] = _encode_utf8(loaded['args'])
+        return loaded
 
 _daemon_command_mapping = {}
 
