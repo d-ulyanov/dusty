@@ -33,7 +33,7 @@ def premade_app():
                        'fake_app', 'apps')
 
 def single_specs_fixture():
-    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('bundle', 'bündle-a', {'description': 'Bündle A', 'apps': ['appa']})
     _write('app', 'appa', {'repo': 'github.com/app/a',
                             'commands': {
                                 'always': ['sleep 9999999']

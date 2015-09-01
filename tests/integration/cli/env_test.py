@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 from dusty.source import Repo
@@ -10,7 +12,7 @@ class TestEnvCLI(DustyIntegrationTestCase):
         super(TestEnvCLI, self).setUp()
         single_specs_fixture()
         self.run_command('repos override github.com/app/a {}'.format(self.fake_local_repo_location))
-        self.run_command('bundles activate bundle-a')
+        self.run_command('bundles activate bündle-a')
 
     def tearDown(self):
         try:
