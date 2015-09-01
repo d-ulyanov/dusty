@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from mock import patch
 import os
 import yaml
@@ -211,7 +213,6 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
 def invalid_fixture():
     _write('app', 'invalid', {'spaghetti': 'meatballs'})
 
-
 def assets_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
     _write('app', 'app-a', {'commands': {
@@ -237,3 +238,15 @@ def assets_fixture():
                                  'path': '/optional_lib_path',
                                  'required': False},
                             ]})
+
+def unicode_fixture():
+    _write('bundle', 'bundle-a', {'description': 'å æ e trø', 'apps': ['appa']})
+    _write(
+        'app', 'appa', {
+            'repo': 'github.com/app/a',
+            'commands': {
+                'always': ['sleep 9999999']
+            },
+            'image': 'busybox',
+            'mount': '/app/a',
+    })
