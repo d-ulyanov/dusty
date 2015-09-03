@@ -23,10 +23,10 @@ def activate_bundle(bundle_names):
     specs = get_specs()
     for bundle_name in bundle_names:
         if bundle_name not in specs[constants.CONFIG_BUNDLES_KEY]:
-            raise KeyError('No bundle exists named {}'.format(bundle_name))
+            raise KeyError(u'No bundle exists named {}'.format(bundle_name))
     activated_bundles = set(get_config_value(constants.CONFIG_BUNDLES_KEY)).union(bundle_names)
     save_config_value(constants.CONFIG_BUNDLES_KEY, list(activated_bundles))
-    log_to_client('Activated bundles {}'.format(', '.join(bundle_names)))
+    log_to_client(u'Activated bundles {}'.format(', '.join(bundle_names)))
 
 @daemon_command
 def deactivate_bundle(bundle_names):

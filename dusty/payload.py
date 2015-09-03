@@ -26,7 +26,7 @@ class Payload(object):
             raise RuntimeError('Function key {} not found; you may need to decorate your function'.format(fn_key))
         doc = {'fn_key': fn_key, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
                'args': self.args, 'kwargs': self.kwargs}
-        return json.dumps(doc)
+        return json.dumps(doc, ensure_ascii=False)
 
     @staticmethod
     def deserialize(doc):
