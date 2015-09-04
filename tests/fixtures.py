@@ -43,13 +43,13 @@ def unicode_fixture():
                       })
 
 def single_specs_fixture():
-    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('bundle', 'bundle-a', {'description': 'Bundle A Ɲ', 'apps': ['appa']})
     _write('app', 'appa', {'repo': 'github.com/app/a',
                             'commands': {
                                 'always': ['sleep 9999999']
                             },
                             'image': 'busybox',
-                            'mount': '/app/a',
+                            'mount': '/app/ƺappa',
                             'scripts': [
                                 {'description': 'A script description',
                                  'command': ['touch /app/a/foo'],
