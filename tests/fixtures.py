@@ -49,18 +49,18 @@ def single_specs_fixture():
                                 'always': ['sleep 9999999']
                             },
                             'image': 'busybox',
-                            'mount': '/app/ƺappa',
+                            'mount': '/app/a',
                             'scripts': [
-                                {'description': 'A script description',
+                                {'description': 'A script description ƺ',
                                  'command': ['touch /app/a/foo'],
                                  'name': 'example'},
-                                {'description': 'A rm script',
+                                {'description': 'A rm script ƺ',
                                  'command': ['rm'],
                                  'name': 'example_rm'},
-                                {'description': 'An ls script',
+                                {'description': 'An ls script ƺ',
                                  'command': ['ls'],
                                  'name': 'example_ls'},
-                                {'description': 'A touch script',
+                                {'description': 'A touch script ƺ',
                                  'command': ['touch'],
                                  'name': 'example_touch'}],
                             'compose': {
