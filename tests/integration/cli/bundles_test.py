@@ -43,4 +43,4 @@ class TestBundlesCLI(DustyIntegrationTestCase):
         unicode_fixture()
         self.run_command('bundles activate bundle-Ɯ')
         result = self.run_command('bundles list')
-        self.assertInSameLine(result, 'bundle-Ɯ', 'X')
+        self.assertInSameLine(result, u'bundle-Ɯ', 'X')
