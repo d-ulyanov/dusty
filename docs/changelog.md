@@ -6,6 +6,8 @@
     * Host names specified in app specs (`host_forwarding.host_name`) can now be used from inside any Dusty app container - previously they only worked from the host Mac.
 * **Misc**
     * The Dusty VM now reserves 10.174.249.x for NAT routing inside the VM. Previously, it reserved 10.0.2.x.
+    * Repos which are specified using local paths are now always considered to be overridden.
+    * Dusty specs can now use local repos by specifying a local path through `dusty config set specs_repo <path>`.
 
 ## 0.6.1 (September 9, 2015)
 

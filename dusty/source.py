@@ -80,6 +80,8 @@ class Repo(object):
 
     @property
     def is_overridden(self):
+        if self.is_local_repo:
+            return True
         return self.remote_path in get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
 
     @property
@@ -89,6 +91,8 @@ class Repo(object):
 
     @property
     def local_path(self):
+        if self.is_local_repo:
+            return urlparse.urlparse(self.remote_path).path
         return self.override_path if self.is_overridden else self.managed_path
 
     @property

@@ -18,12 +18,14 @@ def list_repos():
     table = PrettyTable(['Full Name', 'Short Name', 'Local Override'])
     for repo in repos:
         table.add_row([repo.remote_path, repo.short_name,
-                       repo.override_path if repo.is_overridden else ''])
+                       (repo.override_path or 'Local Repo') if repo.is_overridden else ''])
     log_to_client(table.get_string(sortby='Full Name'))
 
 @daemon_command
 def override_repo(repo_name, source_path):
     repo = Repo.resolve(get_all_repos(), repo_name)
+    if repo.is_local_repo:
+        return log_to_client('This repo is already specified with a local filepath and cannot be overwritten')
     if not os.path.exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
     if not os.path.isdir(source_path):
