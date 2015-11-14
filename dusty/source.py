@@ -118,10 +118,7 @@ class Repo(object):
             else:
                 return self.remote_path + '.git'
         else:
-            if self.remote_path.startswith('ssh://'):
-                return self.remote_path
-            else:
-                return 'ssh://{}@{}'.format(constants.GIT_USER, self.remote_path)
+            return self.remote_path
 
     def ensure_local_repo(self):
         """Given a Dusty repo object, clone the remote into Dusty's local repos

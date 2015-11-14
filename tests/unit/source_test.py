@@ -118,8 +118,8 @@ class TestSource(DustyTestCase):
     def test_ensure_local_repo_when_does_not_exist(self, fake_clone_from):
         temp_dir = os.path.join(self.temp_dir, 'a')
         self.MockableRepo.managed_path = property(lambda repo: temp_dir)
-        self.MockableRepo('github.com/app/a').ensure_local_repo()
-        fake_clone_from.assert_called_with('ssh://git@github.com/app/a', temp_dir)
+        self.MockableRepo('git@github.com/app/a').ensure_local_repo()
+        fake_clone_from.assert_called_with('git@github.com/app/a', temp_dir)
 
     @patch('git.Repo.clone_from')
     def test_ensure_local_repo_when_does_not_exist_with_local_remote(self, fake_clone_from):

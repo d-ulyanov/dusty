@@ -94,8 +94,6 @@ CONTAINER_CP_DIR = '/cp'
 VM_COMMAND_FILES_DIR = '/command_files'
 CONTAINER_COMMAND_FILES_DIR = '/command_files'
 
-GIT_USER = 'git'
-
 HOSTS_PATH = '/etc/hosts'
 EXPORTS_PATH = '/etc/exports'
 
